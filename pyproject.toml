@@ -17,10 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "loguru",
-    "pip",
-    "pytest",
     "python-dotenv",
-    "ruff",
     "tqdm",
     "typer",
 ]
@@ -38,4 +35,10 @@ extend-select = ["I"]  # Add import sorting
 [tool.ruff.lint.isort]
 known-first-party = ["realtime_recsys"]
 force-sort-within-sections = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.17.2",
+]
 
