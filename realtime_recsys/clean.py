@@ -14,10 +14,16 @@ def drop_zero_prices(lf: pl.LazyFrame) -> pl.LazyFrame:
     return lf.filter(pl.col("price") > 0)
 
 
+def drop_duplicate_rows(lf: pl.LazyFrame) -> pl.LazyFrame:
+    """Keep one copy of rows that are identical in every column (logging duplicates)."""
+    return lf.unique(maintain_order=True)
+
+
 def clean_events(input_path: Path, output_path: Path) -> None:
     """Read the raw Parquet, apply the cleaning steps, and write the clean Parquet."""
     lf = pl.scan_parquet(input_path)
     lf = drop_zero_prices(lf)
+    lf = drop_duplicate_rows(lf)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     lf.sink_parquet(output_path)
 
