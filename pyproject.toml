@@ -41,7 +41,9 @@ force-sort-within-sections = true
 dev = [
     "ipykernel>=7.4.0",
     "matplotlib>=3.11.2",
+    "pandas>=3.1.0",
     "pre-commit>=4.7.0",
+    "pyarrow>=26.0.0",
     "pytest>=9.1.1",
     "ruff>=0.17.2",
 ]
