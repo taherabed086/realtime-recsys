@@ -9,23 +9,26 @@ from realtime_recsys.config import INTERIM_DATA_DIR, PROCESSED_DATA_DIR
 app = typer.Typer()
 
 
-def drop_zero_prices(lf: pl.LazyFrame) -> pl.LazyFrame:
+def drop_zero_prices(df: pl.DataFrame) -> pl.DataFrame:
     """Remove rows whose price is zero or negative (a missing price, not a real one)."""
-    return lf.filter(pl.col("price") > 0)
+    return df.filter(pl.col("price") > 0)
 
 
-def drop_duplicate_rows(lf: pl.LazyFrame) -> pl.LazyFrame:
-    """Keep one copy of rows that are identical in every column (logging duplicates)."""
-    return lf.unique(maintain_order=True)
+def drop_duplicate_rows(df: pl.DataFrame) -> pl.DataFrame:
+    """Keep one copy of rows that are identical in every column (logging duplicates).
+
+    maintain_order=True keeps the rows sorted by time.
+    """
+    return df.unique(maintain_order=True)
 
 
 def clean_events(input_path: Path, output_path: Path) -> None:
     """Read the raw Parquet, apply the cleaning steps, and write the clean Parquet."""
-    lf = pl.scan_parquet(input_path)
-    lf = drop_zero_prices(lf)
-    lf = drop_duplicate_rows(lf)
+    df = pl.read_parquet(input_path)
+    df = drop_zero_prices(df)
+    df = drop_duplicate_rows(df)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    lf.sink_parquet(output_path)
+    df.write_parquet(output_path)
 
 
 @app.command()
